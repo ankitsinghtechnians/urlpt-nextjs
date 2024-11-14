@@ -20,11 +20,15 @@ const ForgotPassword: React.FC = () => {
         e.preventDefault();
         // console.log(email);
         // await mailAction({email});
+        var storedUser;
         try {
           const token = nanoid(32);
           const tokenData = { token: token };
+          if (typeof window !== 'undefined') {
           localStorage.setItem('emailVerificationToken', JSON.stringify(tokenData));
-          const storedUser = localStorage.getItem('user');
+          storedUser = localStorage.getItem('user');
+        }
+         
           console.log(storedUser);
           let userData;
     

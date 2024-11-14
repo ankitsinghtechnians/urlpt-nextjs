@@ -14,9 +14,12 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ params }) => {
 
   // Fetch localStorage token after component mounts
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+
     const storedTokenData = localStorage.getItem('emailVerificationToken');
     const localtoken = storedTokenData ? JSON.parse(storedTokenData).token : null;
-    setLocalToken(localtoken);  // Set the token in state after it's fetched
+    setLocalToken(localtoken); 
+    } // Set the token in state after it's fetched
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -35,18 +38,23 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ params }) => {
     }
 
     try {
+      if (typeof window !== 'undefined') {
+
       const storedUser = localStorage.getItem('user');
       if (!storedUser) {
         setErrorMessage('No user data found in localStorage.');
         return;
       }
 
+     
+
       const userData = JSON.parse(storedUser);
       const myUserName = userData.username;
-
+    
       // Fetch user data if username exists
       const res = await axios.get("https://urlpt.technians.in/login/");
       const foundUser = res.data.find((user: { username: string }) => user.username === myUserName);
+    
 
       if (foundUser) {
         // Make the POST request to reset the password
@@ -64,6 +72,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ params }) => {
         console.error("User not found.");
         setErrorMessage('User not found.');
       }
+    }
     } catch (error) {
       console.error('Error resetting password:', error);
       setErrorMessage('Failed to reset password.');

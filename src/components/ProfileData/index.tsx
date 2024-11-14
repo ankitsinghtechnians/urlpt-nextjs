@@ -7,8 +7,12 @@ const ProfileData = () => {
 
   useEffect(() => {
     if (session) {
+
       // Store user email in localStorage
+      if (typeof window !== 'undefined') {
+
       localStorage.setItem('user', JSON.stringify(session.user?.email));
+      }
     }
   }, [session]);
 
@@ -26,6 +30,8 @@ const ProfileData = () => {
   const [userId, setUserId] = useState(null);  // To store the user's id
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+
     const storedUser = localStorage.getItem('user');
     let userData;
 
@@ -56,9 +62,11 @@ const ProfileData = () => {
             console.log('User not found.');
           }
         })
+      
         .catch((error) => {
           console.error('Error fetching data:', error);
         });
+      }
     } else {
       console.log('No user data found in localStorage.');
     }

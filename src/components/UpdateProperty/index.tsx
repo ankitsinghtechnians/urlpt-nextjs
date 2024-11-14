@@ -22,14 +22,17 @@ const UpdateProperties = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("https://urlpt.technians.in/property");
+        const response = await axios.get("https://urlpt.technians.in/property/");
         const data = response.data;
+        if (typeof window !== 'undefined') {
+
         const userId = localStorage.getItem('userId');
         const user = Number(userId);  // Ensure userId is a number
         const filteredData = data.filter((item: { user: number }) => item.user === user);
 
         setProducts(filteredData);
         setLoading(false);
+        }
       } catch (error) {
         console.error("Error fetching products:", error);
         setLoading(false);

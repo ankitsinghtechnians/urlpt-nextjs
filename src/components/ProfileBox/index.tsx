@@ -22,6 +22,8 @@ const ProfileBox = () => {
       setUser(session.user?.name || null);
       setMyData(session.user?.email || null);
     } else {
+      if (typeof window !== 'undefined') {
+
       const storedUser = localStorage.getItem('user');
       console.log(storedUser);
       let userData;
@@ -42,10 +44,12 @@ const ProfileBox = () => {
             } else {
               console.log("User not found.");
             }
+          
           })
           .catch((error) => {
             console.error("Error fetching data:", error);
           });
+        }
       } else {
         console.log('No user data found in localStorage.');
         router.push('/auth/signin');

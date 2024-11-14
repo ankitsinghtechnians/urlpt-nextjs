@@ -26,12 +26,15 @@ const UpdateProperties = () => {
       try {
         const response = await axios.get("https://urlpt.technians.in/campaign/");
         const data = response.data;
+        if (typeof window !== 'undefined') {
+
         const userId = localStorage.getItem('userId');
         const user = Number(userId);
         const filteredData = data.filter((item: { user: number }) => item.user === user);
 
         setCampaigns(filteredData);
         setLoading(false);
+        }
       } catch (error) {
         console.error("Error fetching campaigns:", error);
         setLoading(false);
