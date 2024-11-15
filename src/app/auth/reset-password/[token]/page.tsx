@@ -38,7 +38,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ params }) => {
     }
 
     try {
-      if (typeof window !== 'undefined') {
+     
 
       const storedUser = localStorage.getItem('user');
       if (!storedUser) {
@@ -73,7 +73,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ params }) => {
         setErrorMessage('User not found.');
       }
     }
-    } catch (error) {
+     catch (error) {
       console.error('Error resetting password:', error);
       setErrorMessage('Failed to reset password.');
     }
