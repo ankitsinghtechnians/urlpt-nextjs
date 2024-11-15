@@ -47,7 +47,7 @@ const ProfileData = () => {
           const user = res.data.find((user: { username: string }) => user.username === myUserName);
           if (user) {
             setUserId(user.id);
-            localStorage.setItem('userId',user.id)  // Store the user id
+            // localStorage.setItem('userId',user.id)  // Store the user id
             // Pre-fill form data with the found user's data
             setFormData({
               email: user.email,

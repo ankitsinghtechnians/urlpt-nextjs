@@ -39,6 +39,7 @@ const ProfileBox = () => {
           .then((res) => {
             const foundUser = res.data.find((user: { username: string }) => user.username === myUserName);
             if (foundUser) {
+               localStorage.setItem('userId',foundUser.id);
               setMyData(foundUser.email); // Store user email in state
               setUser(foundUser.username);
             } else {
