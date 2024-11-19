@@ -58,6 +58,10 @@ const DropdownUser = () => {
       await signOut({ redirect: false });
     }
     localStorage.removeItem('user');
+    localStorage.removeItem('selectedMenu');
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    
     router.push('/auth/signin');
   };
 
