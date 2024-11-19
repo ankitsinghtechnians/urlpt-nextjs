@@ -1,18 +1,31 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import bcrypt from "bcryptjs";
 import axios from "axios";
-import homePage from "@/app/homepage/page";
-
 import { useRouter } from "next/navigation";
 
+// Check if the user is registered with the username
+const checkUserExists = async (username: string) => {
+  try {
+    const response = await fetch("https://urlpt.technians.in/login/");
+    if (!response.ok) {
+      throw new Error("Failed to fetch data");
+    }
+
+    const data = await response.json();
+    console.log(data)
+    // Check if any user exists with the same username
+    return data.some((user: any) => user.username === username);
+  } catch (error) {
+    console.error("Error checking user existence:", error);
+    return false;
+  }
+};
+
 export default function SigninWithPassword() {
-  const [data, setData] = useState({
-    remember: false,
-  });
-  const [formData, setFormData] = useState({ username: "", password: "" });
+  const [formData, setFormData] = useState({ username: "", password: "", remember: false });
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,13 +36,30 @@ export default function SigninWithPassword() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null); // Reset error state
+
+    // Basic validation
+    if (!formData.username || !formData.password) {
+      setError("Both username and password are required.");
+      alert("Both username and password are required.");
+      return;
+    }
+
+    // Check if the user exists with the provided username
+    const userExists = await checkUserExists(formData.username);
+    if (!userExists) {
+      setError("Username does not exist. Please check your username.");
+      alert("Username does not exist. Please check your username.");
+      return;
+    }
+
+    setLoading(true);
     const user = {
       username: formData.username,
       password: formData.password,
     };
 
     try {
-      // Send a POST request with plain email and password
+      // Send a POST request with username and password
       const response = await axios.post(
         "https://urlpt.technians.in/login/",
         user,
@@ -37,24 +67,52 @@ export default function SigninWithPassword() {
           headers: {
             "Content-Type": "application/json", // Set appropriate content type
           },
-        },
+        }
       );
       localStorage.setItem("user", JSON.stringify(user));
       console.log("Response:", response.data); // Log the response data
+
       if (response.data.token) {
         console.log("Token:", response.data.token); // Log token for debugging
         localStorage.setItem("token", response.data.token);
-        router.push("/homepage");
-      }
+        // alert("Login successful!"); // Alert on successful login
+        // router.push("/homepage");
+        const storedUser = localStorage.getItem('user');
+        console.log(storedUser);
+        let userData;
+  
+        if (storedUser) {
+          userData = JSON.parse(storedUser);
+          console.log(userData);
+  
+          const myUserName = userData.username; // Get username from user data
+  
+          // Fetch user data if username exists
+          axios.get("https://urlpt.technians.in/login/")
+            .then((res) => {
+              const foundUser = res.data.find((user: { username: string }) => user.username === myUserName);
+              if (foundUser) {
+  
+                localStorage.setItem('userId',foundUser.id);
+                router.push("/homepage")
+              } else {
+                console.log("User not found.");
+              }
+            
+            })
 
-      // Handle success - assuming the API returns a token
-      else {
+          }
+        }
+       else {
         setError("Login failed. Please try again.");
+        alert("Login failed. Please try again.");
       }
     } catch (error) {
-      // Handle error, e.g., invalid credentials
       console.log(error);
       setError("Invalid credentials or server error.");
+      alert("Invalid credentials or server error.");
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -137,7 +195,7 @@ export default function SigninWithPassword() {
           />
           <span
             className={`mr-2.5 inline-flex h-5.5 w-5.5 items-center justify-center rounded-md border border-stroke bg-white text-white text-opacity-0 peer-checked:border-primary peer-checked:bg-primary peer-checked:text-opacity-100 dark:border-stroke-dark dark:bg-white/5 ${
-              data.remember ? "bg-primary" : ""
+              formData.remember ? "bg-primary" : ""
             }`}
           >
             <svg
