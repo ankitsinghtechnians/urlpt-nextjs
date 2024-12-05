@@ -2,48 +2,52 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import axios from "axios";
 
-
 const handler = NextAuth({
+  debug: true, // Enables detailed logs for troubleshooting
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
     }),
   ],
 
   session: {
-    strategy: 'jwt', // If you're using JWT-based session management
+    strategy: "jwt", // Using JWT-based session management
   },
-  
-  callbacks: {
-    async signIn({ user, account, profile }) {
-      const token = account?.access_token;
-      // // Extract user data
-      const { name, email } = user;
-      // Post user data to your API endpoint
-      try {
-       const response= await axios.post('https://urlpt.technians.in/google-auth/', {
-          token: token,
-          // email,
-          // You can add more user fields as needed
-          
-        });
-        console.log('response:',response.data)
-        // localStorage.setItem('user',JSON.stringify(response.data.email));
 
-        return response.data.success; // Continue the sign-in process
-      } catch (error) {
-        console.error("Error posting user data:", error);
-        return false;  // Abort sign-in if the request fails
+  callbacks: {
+    async signIn({ user, account }) {
+      const token = account?.access_token;
+      console.log("Google Access Token:", token);
+
+      try {
+        const response = await axios.post(
+          "https://urlpt.technians.in/google-auth/",
+          { token }, // Sending token as part of the request body
+          {
+            timeout: 20000, // Setting a 10-second timeout
+          }
+        );
+
+        console.log("API Response:", response.data);
+
+        // Check if the API response indicates success
+        if (response.data) {
+          console.log("Sign-in successful.");
+          return true; // Allow sign-in to proceed
+        } else {
+          console.error("Sign-in failed. API did not return success.");
+          return false; // Abort sign-in
+        }
+      } catch (error:any) {
+        console.error("Error posting user data:", error.message || error);
+        return false; // Abort sign-in on error
       }
-      
-    },  
+    },
 
     async redirect({ url, baseUrl }) {
-              //  localStorage.setItem('user',JSON.stringify(user.email));
-
       // Ensure redirect goes to the correct URL after successful login
-      return 'http://localhost:3000/homepage';
+      return "http://localhost:3000/homepage";
     },
   },
 });

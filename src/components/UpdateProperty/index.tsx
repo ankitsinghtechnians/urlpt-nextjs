@@ -22,7 +22,7 @@ const UpdateProperties = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("https://urlpt.technians.in/property");
+        const response = await axios.get("https://urlpt.technians.in/property/");
         const data = response.data;
         const userId = localStorage.getItem('userId');
         const user = Number(userId);  // Ensure userId is a number

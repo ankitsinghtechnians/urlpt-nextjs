@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import React from "react";
 import SignIn from "./auth/signin/page";
+import { connectDB } from "@/config/db";
 
 
 export const metadata: Metadata = {
@@ -10,6 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
+  connectDB();
   return (
     <>
          <SignIn />

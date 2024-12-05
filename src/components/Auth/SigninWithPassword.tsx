@@ -94,7 +94,9 @@ export default function SigninWithPassword() {
               if (foundUser) {
   
                 localStorage.setItem('userId',foundUser.id);
+
                 router.push("/homepage")
+                
               } else {
                 console.log("User not found.");
               }
